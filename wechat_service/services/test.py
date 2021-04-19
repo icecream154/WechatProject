@@ -19,7 +19,7 @@ def do_request(request_type: str, url: str, params: dict = None, headers: dict =
             response_dict = json.loads(response.text)
         except json.decoder.JSONDecodeError as ex:
             print(ex)
-    elif response.status_code != 404:
+    else:
         response_dict = response.text
     return response.status_code, response_dict
 
@@ -28,7 +28,8 @@ def do_request(request_type: str, url: str, params: dict = None, headers: dict =
 def fetch_wx_user(request):
     api_url = "https://api.weixin.qq.com/sns/jscode2session"
     # appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code
-    code = fetch_parameter_dict(request, 'GET')['code']
+    code = request.GET['code']
+    print('code from request: %s' % code)
     params = {
         'appid': 'wx459cd21fbb11658a',
         'secret': '8f6096488ae98408f07ba23a766d526f',
@@ -36,4 +37,5 @@ def fetch_wx_user(request):
         'grant_type': 'authorization_code'
     }
     status_code, response_dict = do_request('GET', api_url, params=params)
+    print('status_code: [%d] and response: %s' % (status_code, response_dict))
     return HttpResponse(response_dict)
